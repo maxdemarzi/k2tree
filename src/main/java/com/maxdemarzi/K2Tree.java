@@ -8,6 +8,10 @@ public class K2Tree {
     private byte _height;
     public int[] Values;
 
+    public K2Tree() {
+        this((byte)32);
+    }
+
     public K2Tree(byte height) {
         _height = height;
     }
@@ -55,6 +59,23 @@ public class K2Tree {
         }
 
         return _tree[path].get(x, y);
+    }
+
+    public void remove(int x, int y)
+    {
+        if (_height == 0)
+        {
+             // // TODO: 12/21/16 Implement cleanup 
+            Values = null;
+            return;
+        }
+
+        int bit0 = getBit(x);
+        int bit1 = getBit(y);
+
+        int path = 2 * bit0 + bit1;
+
+        _tree[path].remove(x, y);
     }
 
     public ArrayList<Integer> getByX(int x)

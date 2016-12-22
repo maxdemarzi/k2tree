@@ -23,6 +23,10 @@ public class K2TreeTest {
         boolean actual = k2Tree.get(key1, key2);
 
         Assert.assertTrue(actual);
+
+        k2Tree.remove(key1, key2);
+        actual = k2Tree.get(key1, key2);
+        Assert.assertFalse(actual);
     }
 
     @Test

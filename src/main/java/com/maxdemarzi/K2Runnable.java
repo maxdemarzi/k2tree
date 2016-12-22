@@ -14,11 +14,22 @@ public class K2Runnable implements Runnable {
 
     @Override
     public void run() {
+
         for (Relationship relationship : td.createdRelationships()) {
-            relationship.getStartNode();
-            relationship.getEndNode();
-            relationship.getType();
+            K2Trees.set(
+                    relationship.getType().name(),
+                    relationship.getStartNode().getId(),
+                    relationship.getEndNode().getId());
         }
+
+        for (Relationship relationship : td.deletedRelationships()) {
+            K2Trees.unset(
+                    relationship.getType().name(),
+                    relationship.getStartNode().getId(),
+                    relationship.getEndNode().getId());
+        }
+
+
     }
 
 }
