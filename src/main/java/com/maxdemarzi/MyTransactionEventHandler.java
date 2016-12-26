@@ -25,15 +25,9 @@ public class MyTransactionEventHandler implements TransactionEventHandler {
 
     @Override
     public void afterCommit(TransactionData td, Object o) {
-        //ex.submit(new K2Runnable(td));
         try (Transaction tx = db.beginTx()) {
             for (Relationship relationship : td.createdRelationships()) {
                 K2Trees.set(
-                        relationship.getType().name(),
-                        relationship.getStartNode().getId(),
-                        relationship.getEndNode().getId()
-                );
-                RK2Trees.set(
                         relationship.getType().name(),
                         relationship.getStartNode().getId(),
                         relationship.getEndNode().getId()

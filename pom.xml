@@ -11,7 +11,7 @@
     <properties>
         <neo4j.version>3.1.0</neo4j.version>
         <junit.version>4.12</junit.version>
-        <roaring.version>0.6.29</roaring.version>
+        <jmh.version>1.17.3</jmh.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -35,11 +35,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.roaringbitmap</groupId>
-            <artifactId>RoaringBitmap</artifactId>
-            <version>${roaring.version}</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
@@ -48,13 +43,13 @@
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
             <scope>test</scope>
-            <version>1.6.1</version>
+            <version>1.17.3</version>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
             <scope>test</scope>
-            <version>1.6.1</version>
+            <version>1.17.3</version>
         </dependency>
     </dependencies>
 

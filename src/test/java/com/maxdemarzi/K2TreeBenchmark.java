@@ -15,19 +15,15 @@ public class K2TreeBenchmark {
     private GraphDatabaseService db;
     private Random rand = new Random();
     RelationshipType LIKES = RelationshipType.withName("LIKES");
-    RelationshipType PURCHASED = RelationshipType.withName("PURCHASED");
 
-    @Param({"1000"})
+    @Param({"10000"})
     public int userCount;
 
-    @Param({"100"})
+    @Param({"200"})
     public int itemCount;
 
-    @Param({"50"})
+    @Param({"200"})
     public int likesCount;
-
-    @Param({"5"})
-    public int purchaseCount;
 
 
     @Setup
@@ -67,10 +63,6 @@ public class K2TreeBenchmark {
                     user.createRelationshipTo(items.get(j), LIKES);
                 }
 
-                for (int j = 0; j < purchaseCount; j++) {
-                    user.createRelationshipTo(items.get(j), PURCHASED);
-                }
-
                 if(i % 100 == 0){
                     tx.success();
                     tx.close();
@@ -97,7 +89,7 @@ public class K2TreeBenchmark {
     @Threads(4)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public boolean measureSingleLike() throws IOException {
+    public boolean measureSingleLikeK2() throws IOException {
         return K2Trees.get("LIKES", rand.nextInt(userCount), userCount + rand.nextInt(itemCount));
     }
 
@@ -119,18 +111,7 @@ public class K2TreeBenchmark {
     @Threads(4)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public boolean measureRoaringSingleLike() throws IOException {
-        return RK2Trees.get("LIKES", rand.nextInt(userCount), userCount + rand.nextInt(itemCount));
-    }
-
-    @Benchmark
-    @Warmup(iterations = 10)
-    @Measurement(iterations = 5)
-    @Fork(1)
-    @Threads(4)
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    public boolean measureSingleLike2() throws IOException {
+    public boolean measureSingleLikeNeo4j() throws IOException {
         try (Transaction tx = db.beginTx()) {
             Node userNode = db.getNodeById(rand.nextInt(userCount));
             Node itemNode = db.getNodeById(userCount + rand.nextInt(itemCount));
@@ -144,57 +125,6 @@ public class K2TreeBenchmark {
             tx.success();
         }
         return false;
-    }
-
-    @Benchmark
-    @Warmup(iterations = 10)
-    @Measurement(iterations = 5)
-    @Fork(1)
-    @Threads(4)
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    public void measureAllUserLikes() throws IOException {
-        int count = 0;
-        for (int user = 0; user < userCount; user++){
-            ArrayList<Integer> itemNodeIds = K2Trees.getByX("LIKES", user);
-            count += itemNodeIds.size();
-        }
-    }
-
-    @Benchmark
-    @Warmup(iterations = 10)
-    @Measurement(iterations = 5)
-    @Fork(1)
-    @Threads(4)
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    public void measureAllUserLikes2() throws IOException {
-        int count = 0;
-        try (Transaction tx = db.beginTx()) {
-            for (int user = 0; user < userCount; user++) {
-                Node userNode = db.getNodeById(user);
-                ArrayList<Long> itemNodeIds = new ArrayList<>();
-                for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, LIKES)) {
-                    itemNodeIds.add(rel.getEndNode().getId());
-                }
-                count += itemNodeIds.size();
-            }
-            tx.success();
-        }
-    }
-    @Benchmark
-    @Warmup(iterations = 10)
-    @Measurement(iterations = 5)
-    @Fork(1)
-    @Threads(4)
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.SECONDS)
-    public void measureAllUserLikes4() throws IOException {
-        int count = 0;
-        for (int user = 0; user < userCount; user++){
-            ArrayList<Integer> itemNodeIds = K4Trees.getByX("LIKES", user);
-            count += itemNodeIds.size();
-        }
     }
 
 }

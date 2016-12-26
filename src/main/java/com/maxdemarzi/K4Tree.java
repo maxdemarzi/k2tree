@@ -123,28 +123,23 @@ public class K4Tree {
 
         int bit1 = getBit(y);
 
-        int path1 = bit1;
-        int path2 = 4 + bit1;
-        int path3 = 8 + bit1;
-        int path4 = 12 + bit1;
-
         ArrayList<Integer> res = new ArrayList<>();
 
-        if (_tree[path1] != null)
+        if (_tree[bit1] != null)
         {
-            res.addAll(_tree[path1].getByY(y));
+            res.addAll(_tree[bit1].getByY(y));
         }
-        if (_tree[path2] != null)
+        if (_tree[4 + bit1] != null)
         {
-            res.addAll(_tree[path2].getByY(y));
+            res.addAll(_tree[4 + bit1].getByY(y));
         }
-        if (_tree[path3] != null)
+        if (_tree[8 + bit1] != null)
         {
-            res.addAll(_tree[path3].getByY(y));
+            res.addAll(_tree[8 + bit1].getByY(y));
         }
-        if (_tree[path4] != null)
+        if (_tree[12 + bit1] != null)
         {
-            res.addAll(_tree[path4].getByY(y));
+            res.addAll(_tree[12 + bit1].getByY(y));
         }
 
         return res;
