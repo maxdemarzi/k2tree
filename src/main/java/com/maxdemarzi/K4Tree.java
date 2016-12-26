@@ -2,19 +2,21 @@ package com.maxdemarzi;
 
 import java.util.ArrayList;
 
-public class K2Tree {
+public class K4Tree {
 
-    private K2Tree[] _tree;
+    private K4Tree[] _tree;
     private byte _height;
     public int[] Values;
 
-    public K2Tree() {
-        this((byte)32);
+    public K4Tree() {
+        this((byte)16);
     }
 
-    public K2Tree(byte height) {
+    public K4Tree(byte height) {
         _height = height;
-        _tree = new K2Tree[4];
+        if (_height > 0) {
+            _tree = new K4Tree[16];
+        }
     }
 
     public void set(int x, int y) {
@@ -29,11 +31,11 @@ public class K2Tree {
         int bit0 = getBit(x);
         int bit1 = getBit(y);
 
-        int path = 2 * bit0 + bit1;
+        int path = (4 * bit0) + bit1;
 
         if (_tree[path] == null)
         {
-            _tree[path] = new K2Tree((byte)(_height - 1));
+            _tree[path] = new K4Tree((byte)(_height - 1));
         }
 
         _tree[path].set(x, y);
@@ -49,7 +51,7 @@ public class K2Tree {
         int bit0 = getBit(x);
         int bit1 = getBit(y);
 
-        int path = 2 * bit0 + bit1;
+        int path = 4 * bit0 + bit1;
 
         if (_tree[path] == null)
         {
@@ -63,7 +65,7 @@ public class K2Tree {
     {
         if (_height == 0)
         {
-             // // TODO: 12/21/16 Implement cleanup 
+            // // TODO: 12/21/16 Implement cleanup
             Values = null;
             return;
         }
@@ -71,7 +73,7 @@ public class K2Tree {
         int bit0 = getBit(x);
         int bit1 = getBit(y);
 
-        int path = 2 * bit0 + bit1;
+        int path = 4 * bit0 + bit1;
 
         _tree[path].remove(x, y);
     }
@@ -85,9 +87,10 @@ public class K2Tree {
 
         int bit0 = getBit(x);
 
-        int path1 = 2 * bit0;
-        int path2 = 2 * bit0 + 1;
-
+        int path1 = 4 * bit0;
+        int path2 = 4 * bit0 + 1;
+        int path3 = 4 * bit0 + 2;
+        int path4 = 4 * bit0 + 3;
 
         ArrayList<Integer> res = new ArrayList<>();
 
@@ -98,6 +101,14 @@ public class K2Tree {
         if (_tree[path2] != null)
         {
             res.addAll(_tree[path2].getByX(x));
+        }
+        if (_tree[path3] != null)
+        {
+            res.addAll(_tree[path3].getByX(x));
+        }
+        if (_tree[path4] != null)
+        {
+            res.addAll(_tree[path4].getByX(x));
         }
 
         return res;
@@ -112,8 +123,10 @@ public class K2Tree {
 
         int bit1 = getBit(y);
 
-        int path1 = 2 * 0 + bit1;
-        int path2 = 2 * 1 + bit1;
+        int path1 = bit1;
+        int path2 = 4 + bit1;
+        int path3 = 8 + bit1;
+        int path4 = 12 + bit1;
 
         ArrayList<Integer> res = new ArrayList<>();
 
@@ -125,13 +138,20 @@ public class K2Tree {
         {
             res.addAll(_tree[path2].getByY(y));
         }
+        if (_tree[path3] != null)
+        {
+            res.addAll(_tree[path3].getByY(y));
+        }
+        if (_tree[path4] != null)
+        {
+            res.addAll(_tree[path4].getByY(y));
+        }
 
         return res;
     }
 
     private int getBit(int val)
     {
-        return (val / (int)Math.pow(2, _height - 1)) % 2;
+        return (val / (int)Math.pow(4, _height - 1)) % 4;
     }
-
 }

@@ -97,16 +97,8 @@ public class K2TreeBenchmark {
     @Threads(4)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public void measureRecommend() throws IOException {
-        int count = 0;
-        for (int user = 0; user < userCount; user++){
-            for (int item = 0; item < itemCount; item++) {
-                if (K2Trees.get("LIKES", user, userCount + item)) {
-                    count++;
-                }
-            }
-        }
-        //System.out.println(count);
+    public boolean measureSingleLike() throws IOException {
+        return K2Trees.get("LIKES", rand.nextInt(userCount), userCount + rand.nextInt(itemCount));
     }
 
     @Benchmark
@@ -116,22 +108,92 @@ public class K2TreeBenchmark {
     @Threads(4)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.SECONDS)
-    public void measureRecommend2() throws IOException {
+    public boolean measureSingleLikeK4() throws IOException {
+        return K4Trees.get("LIKES", rand.nextInt(userCount), userCount + rand.nextInt(itemCount));
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10)
+    @Measurement(iterations = 5)
+    @Fork(1)
+    @Threads(4)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    public boolean measureRoaringSingleLike() throws IOException {
+        return RK2Trees.get("LIKES", rand.nextInt(userCount), userCount + rand.nextInt(itemCount));
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10)
+    @Measurement(iterations = 5)
+    @Fork(1)
+    @Threads(4)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    public boolean measureSingleLike2() throws IOException {
+        try (Transaction tx = db.beginTx()) {
+            Node userNode = db.getNodeById(rand.nextInt(userCount));
+            Node itemNode = db.getNodeById(userCount + rand.nextInt(itemCount));
+
+            for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, LIKES)) {
+                if (rel.getEndNode().equals(itemNode)) {
+                    return true;
+                }
+            }
+
+            tx.success();
+        }
+        return false;
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10)
+    @Measurement(iterations = 5)
+    @Fork(1)
+    @Threads(4)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    public void measureAllUserLikes() throws IOException {
+        int count = 0;
+        for (int user = 0; user < userCount; user++){
+            ArrayList<Integer> itemNodeIds = K2Trees.getByX("LIKES", user);
+            count += itemNodeIds.size();
+        }
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10)
+    @Measurement(iterations = 5)
+    @Fork(1)
+    @Threads(4)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    public void measureAllUserLikes2() throws IOException {
         int count = 0;
         try (Transaction tx = db.beginTx()) {
             for (int user = 0; user < userCount; user++) {
                 Node userNode = db.getNodeById(user);
-                for (int item = 0; item < itemCount; item++) {
-                    Node itemNode = db.getNodeById(userCount + item);
-                    for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, LIKES)) {
-                        if (rel.getEndNode().equals(itemNode)) {
-                            count++;
-                        }
-                    }
+                ArrayList<Long> itemNodeIds = new ArrayList<>();
+                for (Relationship rel : userNode.getRelationships(Direction.OUTGOING, LIKES)) {
+                    itemNodeIds.add(rel.getEndNode().getId());
                 }
+                count += itemNodeIds.size();
             }
             tx.success();
-            //System.out.println(count);
+        }
+    }
+    @Benchmark
+    @Warmup(iterations = 10)
+    @Measurement(iterations = 5)
+    @Fork(1)
+    @Threads(4)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.SECONDS)
+    public void measureAllUserLikes4() throws IOException {
+        int count = 0;
+        for (int user = 0; user < userCount; user++){
+            ArrayList<Integer> itemNodeIds = K4Trees.getByX("LIKES", user);
+            count += itemNodeIds.size();
         }
     }
 

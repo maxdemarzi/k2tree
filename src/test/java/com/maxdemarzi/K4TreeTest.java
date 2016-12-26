@@ -7,31 +7,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-public class K2TreeTest {
+public class K4TreeTest {
 
     @Test
     public void shouldBasicallyWork() {
-        byte height = 16;
-        K2Tree k2Tree = new K2Tree(height);
+        byte height = 6;
+        K4Tree k4Tree = new K4Tree(height);
 
         Random rand = new Random();
         Integer  key1 = rand.nextInt(1000);
         Integer  key2 = rand.nextInt(1000);
 
-        k2Tree.set(key1, key2);
+        k4Tree.set(key1, key2);
 
-        boolean actual = k2Tree.get(key1, key2);
+        boolean actual = k4Tree.get(key1, key2);
 
         Assert.assertTrue(actual);
 
-        k2Tree.remove(key1, key2);
-        actual = k2Tree.get(key1, key2);
+        int key3 = (key2 + 1) % 1000;
+        k4Tree.set(key1, key3);
+        Integer actual1 = k4Tree.getByX(key1).get(0);
+        Assert.assertEquals(actual1, key2);
+
+        Assert.assertTrue(k4Tree.getByX(key1).size() == 2);
+        Assert.assertTrue(k4Tree.getByX(key1).contains(key2));
+        Assert.assertTrue(k4Tree.getByX(key1).contains(key3));
+
+
+        k4Tree.remove(key1, key2);
+        actual = k4Tree.get(key1, key2);
         Assert.assertFalse(actual);
     }
 
     @Test
     public void shouldReallyWork() {
-        K2Tree k2Tree = new K2Tree();
+        K4Tree k4Tree = new K4Tree();
 
         Random rand = new Random();
         HashMap<Integer, Integer> check = new HashMap<>();
@@ -42,10 +52,10 @@ public class K2TreeTest {
             if (check.containsKey(key1)) {
                 continue;
             }
-            k2Tree.set(key1, key2);
+            k4Tree.set(key1, key2);
             check.put(key1, key2);
 
-            boolean actual = k2Tree.get(key1, key2);
+            boolean actual = k4Tree.get(key1, key2);
 
             Assert.assertTrue(actual);
         }
@@ -53,13 +63,12 @@ public class K2TreeTest {
         for (Integer key : check.keySet()) {
             Integer expected1 = check.get(key);
 
-            Integer actual1 = k2Tree.getByX(key).get(0);
-            ArrayList<Integer> actual2 = k2Tree.getByY(expected1);
+            Integer actual1 = k4Tree.getByX(key).get(0);
+            ArrayList<Integer> actual2 = k4Tree.getByY(expected1);
 
             Assert.assertEquals(actual1, expected1);
             Assert.assertTrue(actual2.contains(key));
         }
 
     }
-
 }

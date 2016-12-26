@@ -11,6 +11,7 @@
     <properties>
         <neo4j.version>3.1.0</neo4j.version>
         <junit.version>4.12</junit.version>
+        <roaring.version>0.6.29</roaring.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -32,6 +33,11 @@
             <type>test-jar</type>
             <version>${neo4j.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.roaringbitmap</groupId>
+            <artifactId>RoaringBitmap</artifactId>
+            <version>${roaring.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

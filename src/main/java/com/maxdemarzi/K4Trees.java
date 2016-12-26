@@ -3,8 +3,8 @@ package com.maxdemarzi;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class K2Trees {
-    private static HashMap<String, K2Tree> trees = new HashMap<>();
+public class K4Trees {
+    private static HashMap<String, K4Tree> trees = new HashMap<>();
 
     public static boolean get(String name, long from, long to) {
         if (trees.containsKey(name)) {
@@ -34,7 +34,7 @@ public class K2Trees {
         if (trees.containsKey(name)) {
             trees.get(name).set(((Long) from).intValue(), ((Long) to).intValue());
         } else {
-            K2Tree k2 = new K2Tree();
+            K4Tree k2 = new K4Tree();
             k2.set(((Long) from).intValue(), ((Long) to).intValue());
             trees.put(name, k2);
         }
@@ -44,7 +44,7 @@ public class K2Trees {
         if (trees.containsKey(name)) {
             trees.get(name).set(((Long) from).intValue(), ((Long) to).intValue());
         } else {
-            K2Tree k2 = new K2Tree();
+            K4Tree k2 = new K4Tree();
             k2.set(((Long) from).intValue(), ((Long) to).intValue());
             trees.put(name, k2);
         }
